@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+    <changeSet id="init.01" author="NhatPA" context="Create tables">
+        <sql>
+            CREATE TABLE fs
+            (
+                s_node_fs_id     VARCHAR(255) NOT NULL,
+                depth            INTEGER      NOT NULL,
+                gab              TIMESTAMP WITHOUT TIME ZONE,
+                gbis             TIMESTAMP WITHOUT TIME ZONE,
+                fs_kurz          VARCHAR(255),
+                fslang           VARCHAR(255),
+                s_node_parent_id VARCHAR(255),
+                CONSTRAINT pk_fs PRIMARY KEY (s_node_fs_id)
+            );
+
+            CREATE TABLE ku
+            (
+                s_node_ku_id     VARCHAR(255) NOT NULL,
+                depth            INTEGER      NOT NULL,
+                gab              TIMESTAMP WITHOUT TIME ZONE,
+                gbis             TIMESTAMP WITHOUT TIME ZONE,
+                kulang           VARCHAR(255),
+                s_node_parent_id VARCHAR(255),
+                CONSTRAINT pk_ku PRIMARY KEY (s_node_ku_id)
+            );
+
+            CREATE TABLE oe
+            (
+                s_oe_id            VARCHAR(255) NOT NULL,
+                s_ku_id            VARCHAR(255),
+                s_fs_id            VARCHAR(255),
+                s_parentoe_l_id    VARCHAR(255),
+                s_parentoe_f_id    VARCHAR(255),
+                ps_oeid            INTEGER,
+                fs_start           INTEGER,
+                "gültig_x0020_ab"  TIMESTAMP WITHOUT TIME ZONE,
+                "gültig_x0020_bis" TIMESTAMP WITHOUT TIME ZONE,
+                typ                VARCHAR(255),
+                konzernunternehmen VARCHAR(255),
+                "führungsstruktur" VARCHAR(255),
+                org_kz             VARCHAR(255),
+                org_bez1           VARCHAR(255),
+                standort           VARCHAR(255),
+                org_bez2           VARCHAR(255),
+                firmierung1        VARCHAR(255),
+                firmierung2        VARCHAR(255),
+                org_bez3           VARCHAR(255),
+                CONSTRAINT pk_oe PRIMARY KEY (s_oe_id)
+            );
+
+            ALTER TABLE oe
+                ADD CONSTRAINT FK_OE_ON_S_FS FOREIGN KEY (s_fs_id) REFERENCES fs (s_node_fs_id);
+
+            ALTER TABLE oe
+                ADD CONSTRAINT FK_OE_ON_S_KU FOREIGN KEY (s_ku_id) REFERENCES ku (s_node_ku_id);
+        </sql>
+    </changeSet>
+
+    <changeSet id="init.02" author="NhatPA" context="Add data">
+        <sqlFile path="db/changelog/fs.sql"/>
+        <sqlFile path="db/changelog/ku.sql"/>
+        <sqlFile path="db/changelog/oe.sql"/>
+    </changeSet>
+</databaseChangeLog>
